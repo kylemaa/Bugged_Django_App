@@ -14,22 +14,25 @@ for (let i = 0; i < 23; i++) {
             'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
     });
 }
-class ArticleList extends React.Component {
+class ArticleList extends Component {
 
     state = {
         articles: []
     }
 
     componentDidMount() {
-        axios.get('http://127.0.0.1:8000/api')
+        axios.get(`http://127.0.0.1:8000/api/`)
             .then(res => {
-                this.setState({ articles: res.data });
-            });
+                this.setState({
+                    articles: res.data
+                });
+                console.log(res.data);
+            })
     }
 
     render() {
         return (
-            <Articles data={listData} />
+            <Articles data={this.state.articles} />
 
         )
     }

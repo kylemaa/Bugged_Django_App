@@ -2,15 +2,18 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import 'antd/dist/antd.css';
+import { BrowserRouter as Router } from 'react-router-dom';
 import CustomLayout from './containers/Layout';
-import ArticleListView from './containers/ArticleListView'
+import BaseRouter from './routes';
 
 function App() {
   return (
     <div className="App">
-      <CustomLayout>
-        <ArticleListView />
-      </CustomLayout>
+      <Router>
+        <CustomLayout>
+          <BaseRouter />
+        </CustomLayout>
+      </Router>
     </div>
   );
 }
