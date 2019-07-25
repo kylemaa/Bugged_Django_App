@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Articles from '../components/Articles';
 import axios from 'axios';
+import CustomForm from '../components/Form'
 
 const listData = [];
 for (let i = 0; i < 23; i++) {
@@ -21,7 +22,14 @@ class ArticleList extends Component {
     }
 
     componentDidMount() {
-        axios.get(`http://127.0.0.1:8000/api/`)
+        axios.get(`http://127.0.0.1:8000/api/`, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Content-Type': 'application/json',
+                'X-Content-Type-Options': 'nosniff'
+            }
+        })
             .then(res => {
                 this.setState({
                     articles: res.data
@@ -32,8 +40,15 @@ class ArticleList extends Component {
 
     render() {
         return (
-            <Articles data={this.state.articles} />
-
+            <div>
+                <Articles data={this.state.articles} />
+                <br />
+                <h1>Create an Article</h1>
+                <CustomForm
+                    requestType="post"
+                    articleID={null}
+                    buttonText="Create" />
+            </div>
         )
     }
 }
