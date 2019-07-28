@@ -3,6 +3,10 @@ import { updateObject } from '../utilities';
 
 const initalState = {
     token: null,
+    username: null,
+    is_patient: null,
+    is_doctor: null,
+    userId: null,
     error: null,
     loading: false
 }
@@ -17,11 +21,15 @@ const authStart = (state, action) => {
 
 const authSuccess = (state, action) => {
     return updateObject(state, {
-        token: action.token,
+        token: action.user.token,
+        username: action.user.username,
+        is_patient: action.user.is_patient,
+        is_doctor: action.user.is_doctor,
+        userId: action.user.userId,
         error: null,
         loading: false
-    })
-}
+    });
+};
 
 const authFail = (state, action) => {
     return updateObject(state, {

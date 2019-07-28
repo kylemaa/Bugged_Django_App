@@ -1,30 +1,34 @@
 import React from 'react';
-import { Form, Input, Icon, Button } from 'antd';
+import { Form, Input, Icon, Button, Select } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import * as actions from '../store/actions/auth';
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 class RegistrationForm extends React.Component {
     state = {
         confirmDirty: false,
     };
 
-    handleSubmit = (e) => {
+    handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
+                let is_patient = false;
+                if (values.userType === "patient") is_patient = true;
                 this.props.onAuth(
                     values.userName,
                     values.email,
                     values.password,
-                    values.confirm
+                    values.confirm,
+                    is_patient
                 );
-                this.props.history.push('/');
+                // this.props.history.push("/");
             }
         });
-    }
+    };
 
     handleConfirmBlur = (e) => {
         const value = e.target.value;
@@ -51,6 +55,13 @@ class RegistrationForm extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        let errorMessage = null;
+        if (this.props.error) {
+            errorMessage = (
+                <p>{this.props.error.message}</p>
+            );
+        }
+
 
         return (
             <Form onSubmit={this.handleSubmit}>
@@ -100,6 +111,22 @@ class RegistrationForm extends React.Component {
                 </FormItem>
 
                 <FormItem>
+                    {getFieldDecorator("userType", {
+                        rules: [
+                            {
+                                required: true,
+                                message: "Please select a user!"
+                            }
+                        ]
+                    })(
+                        <Select placeholder="Select a user type">
+                            <Option value="Patient">Patient</Option>
+                            <Option value="Doctor">Doctor/ Medical Institution</Option>
+                        </Select>
+                    )}
+                </FormItem>
+
+                <FormItem>
                     <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
                         Signup
         </Button>
@@ -126,7 +153,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAuth: (username, email, password1, password2) => dispatch(actions.authSignup(username, email, password1, password2))
+        onAuth: (username, email, password1, password2, is_patient) => dispatch(actions.authSignup(username, email, password1, password2, is_patient))
     }
 }
 
