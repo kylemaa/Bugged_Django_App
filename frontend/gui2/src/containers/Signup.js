@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Icon, Button, Select } from 'antd';
+import { Form, Input, Icon, Button, Select, Upload } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import * as actions from '../store/actions/auth';
@@ -8,9 +8,14 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 
 class RegistrationForm extends React.Component {
-    state = {
-        confirmDirty: false,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            confirmDirty: false,
+            selectUserType: '',
+        };
+        this.handleSelectChange = this.handleSelectChange.bind(this)
+    }
 
     handleSubmit = e => {
         e.preventDefault();
@@ -52,9 +57,42 @@ class RegistrationForm extends React.Component {
         callback();
     }
 
+    handleSelectChange = (event) => {
+            this.setState({
+            selectUserType: `${event}`
+        });
+ }  
+    userTypeFormSelector = (type) =>{
+    const UserTypeName = type
+    if (UserTypeName === 'Patient'){
+        const { getFieldDecorator } = this.props.form;
+        return (<div>
+        <FormItem><Input placeholder="Full Name"/></FormItem>
+        <FormItem><Input placeholder="Gender"/></FormItem>
+        <FormItem><Input placeholder="Address"/></FormItem>
+        <FormItem><Input placeholder="City, State, Country, ZIP Code"/></FormItem>
+        <FormItem><Input placeholder="Phone Number"/></FormItem>
+        <FormItem><Input placeholder="Email address"/></FormItem>
+        <Form.Item label="Upload your ID">
+          {getFieldDecorator('upload', {
+            valuePropName: 'fileList',
+            getValueFromEvent: this.normFile,
+          })(
+            <Upload name="logo" action="/upload.do" listType="picture">
+              <Button>
+                <Icon type="upload" /> Click to upload
+              </Button>
+            </Upload>,
+          )}
+        </Form.Item>
+        </div>)
+    }
+    if (UserTypeName === 'Doctor'){
+        return  <FormItem><Input></Input></FormItem>
+    }
+}
 
     render() {
-        const { getFieldDecorator } = this.props.form;
         let errorMessage = null;
         if (this.props.error) {
             errorMessage = (
@@ -62,8 +100,11 @@ class RegistrationForm extends React.Component {
             );
         }
 
+        const { getFieldDecorator } = this.props.form;
 
         return (
+            <div>
+                {errorMessage}
             <Form onSubmit={this.handleSubmit}>
 
                 <FormItem>
@@ -119,12 +160,15 @@ class RegistrationForm extends React.Component {
                             }
                         ]
                     })(
-                        <Select placeholder="Select a user type">
+                        <Select placeholder="Select a user type" onChange={this.handleSelectChange}>
                             <Option value="Patient">Patient</Option>
                             <Option value="Doctor">Doctor/ Medical Institution</Option>
                         </Select>
                     )}
-                </FormItem>
+                </FormItem>     
+
+                {this.userTypeFormSelector(this.state.selectUserType)}
+
 
                 <FormItem>
                     <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
@@ -138,6 +182,7 @@ class RegistrationForm extends React.Component {
                 </FormItem>
 
             </Form>
+            </div>
         );
     }
 }
